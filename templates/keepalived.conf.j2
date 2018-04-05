@@ -1,11 +1,17 @@
- ! Configuration File for keepalived
 global_defs {
+  notification_email {
+    - {{ keepalived_notify_email }}
+  }
+  smtp_server {{ keepalived_smtp_server }}
+  smtp_connect_timeout 30
 }
-vrrp_script chk_service {           # Requires keepalived-1.1.13
-        script '/etc/keepalived/check_script.sh'     # cheaper than pidof
-        interval 2                      # check every 2 seconds
+
+vrrp_script {{ keepalived_script_name }} {
+        script '{{ keepalived_script_path }}'
+        interval 2
 }
-vrrp_instance VI_1 {
+
+vrrp_instance {{ keepalived_vrrp_id }} {
     state {{ keepalived_role }}
     interface {{ keepalived_shared_iface }}
     virtual_router_id {{ keepalived_router_id }}
@@ -20,9 +26,9 @@ vrrp_instance VI_1 {
         auth_pass {{ keepalived_auth_pass }}
     }
     virtual_ipaddress {
-        {{ keepalived_shared_ip }} dev {{ keepalived_shared_iface }} label {{ keepalived_shared_iface }}:0
+        {{ keepalived_shared_ip }}
     }
     track_script {
-        chk_service
+        {{ keepalived_script_name }}
     }
 }
