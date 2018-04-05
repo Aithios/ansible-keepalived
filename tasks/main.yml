@@ -16,7 +16,7 @@
 - name: chk_service script shell
   template: 
     src: "{{ local_script_path }}"
-    dest: /etc/keepalived/check_zabbix.sh
+    dest: "{{ keepalived_script_path }}"
     mode: 0755
     owner: root
     group: root
